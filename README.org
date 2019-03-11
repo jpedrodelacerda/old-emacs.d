@@ -1,0 +1,4 @@
+# emacs.d
+emacs configuration
+
+Inspired by many awesome configurations, including @leodag and @hrs.
