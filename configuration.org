@@ -21,6 +21,7 @@ Also, to ensure we always compile and use updated packages:
   (setq load-prefer-newer t)
 #+END_SRC
 
+
 * =evil-mode=
 
   Disable abbrev expansion when hitting Escape.
@@ -59,6 +60,7 @@ Also, to ensure we always compile and use updated packages:
               (lambda () (evil-org-set-key-theme))))
 #+END_SRC
 
+
 * Utilities
   
 #+BEGIN_SRC emacs-lisp
@@ -81,8 +83,10 @@ Also, to ensure we always compile and use updated packages:
     (add-to-list 'exec-path path))
 #+END_SRC
 
+
 * UI Preferences
   
+
 ** Tweaking Window
 
 ***   Disabling menu bar and scroll bar because they just take space up.
@@ -110,6 +114,7 @@ Also, to ensure we always compile and use updated packages:
   (setq frame-title-format '((:eval (projectile-project-name))))
 #+END_SRC
 
+
 ** No start-up-message
    
   Really, why would I want this?
@@ -117,6 +122,7 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
 #+END_SRC
+
 
 ** Theming
 
@@ -179,6 +185,7 @@ Also, to ensure we always compile and use updated packages:
 # #+END_SRC
 
 
+
 ** And this is supposed to be (+18), so no minors. (Just kidding, if you're under 18 just go play some Magic or whatever)
 
 #+BEGIN_SRC emacs-lisp
@@ -186,6 +193,7 @@ Also, to ensure we always compile and use updated packages:
     :config
 	(minions-mode 1))
 #+END_SRC
+
 
 ** Font and resizing
 
@@ -238,6 +246,7 @@ Also, to ensure we always compile and use updated packages:
   (reset-font-size)
 #+END_SRC
 
+
 ** Handling buffers/windows and shit
 
   To move between buffers with Meta and arrows
@@ -248,16 +257,18 @@ Also, to ensure we always compile and use updated packages:
   (global-set-key (kbd "M-<left>") 'windmove-left)
 #+END_SRC
    
+
 ** Excuse me, sir. Do you know where I am?
 
   Async relative line numbering
 
 #+BEGIN_SRC emacs-lisp
   (use-package nlinum-relative
-    :config
-    (nlinum-mode)
-    (nlinum-relative-setup-evil))
+	:config
+	(global-nlinum-relative-mode)
+	(nlinum-relative-setup-evil))
 #+END_SRC
+
 
 ** Highlighting the uncommitted changes
 
@@ -265,10 +276,11 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-    :config
-    (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-    (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+	:config
+	(add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+	(add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
+
 
 * Project Management
 
@@ -308,6 +320,7 @@ Also, to ensure we always compile and use updated packages:
 	       ("C-x C-f" . helm-find-files)
 	       ("C-x C-d" . helm-projectile-find-file)))
 #+END_SRC
+   
 
 ** =company=
 
@@ -326,11 +339,44 @@ Also, to ensure we always compile and use updated packages:
     (setq company-transformers '(company-sort-by-occurrence))
     (add-to-list 'company-backends 'company-ansible)
     :bind
-    ("C-<tab>" . company-select-next)
+    ("C-<tab>" . company-complete-common-or-cycle)
 	("C-'" . company-complete))
 
   (global-company-mode)
+
 #+END_SRC
+
+  Company with fuzzing...
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-flx
+    :after
+    (company)
+	:config
+	(company-flx-mode +1))
+#+END_SRC
+
+** YouCompleteMe
+
+  Best autocompletion ever.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ycmd
+	:init
+	(setq ycmd-server-command '("python" "/home/joao/YouCompleteMe/third_party/ycmd/ycmd"))
+    (set-variable 'ycmd-global-config "/home/jpedrodelacerda/YouCompleteMe/.ycm_extra_conf.py")
+	(add-hook 'after-init-hook #'global-ycmd-mode))
+#+END_SRC
+
+  Company and YCM
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-ycmd
+    :init
+    (company-ycmd-setup))  
+#+END_SRC
+
+
 
 ** =dumb-jump=
 
@@ -475,6 +521,7 @@ Also, to ensure we always compile and use updated packages:
 	:bind ("M-;" . evilnc-comment-or-uncomment-lines))
 #+END_SRC
 
+
 * Programing Environments
   
   A'ight, first I prefer tabs being 4 spaces.
@@ -502,9 +549,18 @@ Also, to ensure we always compile and use updated packages:
   Install =go-mode= and related packages
 
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode)
+  (use-package go-mode
+    :mode "\\.go\\'")
   (use-package go-errcheck)
-  (use-package company-go)
+  (use-package go-eldoc
+    :config
+    (add-hook 'go-mode-hook 'go-eldoc-setup))
+  ;(use-package company-go
+  ;  :config
+  ;  (add-hook 'go-mode-hook (lambda ()
+  ;                        (set (make-local-variable 'company-backends) '(company-go))
+  ;                        (company-mode)))
+  ;  (add-hook 'before-save-hook 'gofmt-before-save))
 #+END_SRC
 
   Setting =$GOPATH=
@@ -514,14 +570,6 @@ Also, to ensure we always compile and use updated packages:
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
 #+END_SRC
 
-
-  Setting the hooks
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'go-mode-hook (lambda ()
-                           (set (make-local-variable 'company-backends) '(company-go))))
-  (add-hook 'before-save-hook 'gofmt-before-save)
-#+END_SRC
 
 ** Rust
 
@@ -658,6 +706,7 @@ Also, to ensure we always compile and use updated packages:
               (setq web-mode-markup-indent-offset 2)))
 #+END_SRC
 
+
 * Org Mode
 ** General configuration for Org
 
@@ -689,6 +738,7 @@ Also, to ensure we always compile and use updated packages:
    (add-hook 'org-shiftright-final-hook 'windmove-right)
    (setq org-support-shift-select 'always)
  #+END_SRC
+
 
 * Editing Settings
   
@@ -763,6 +813,7 @@ Also, to ensure we always compile and use updated packages:
   (global-set-key (kbd "C-x 2") 'split-window-below-and-switch)
   (global-set-key (kbd "C-x 3") 'split-window-right-and-switch)
 #+END_SRC
+
 
 * General shortcuts
 
