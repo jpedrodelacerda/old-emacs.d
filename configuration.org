@@ -132,12 +132,13 @@ Also, to ensure we always compile and use updated packages:
   (use-package all-the-icons)
 #+END_SRC
 
-*** I really like the gruvbox-dark theme, so that's what I'm rolling with.
+*** Trying Ample and taking some time off gruvbox-dark theme.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package gruvbox-theme
+  (use-package ample-theme
     :config
-	(load-theme 'gruvbox-dark-hard t))
+	(load-theme 'ample t)
+    (enable-theme 'ample))
 #+END_SRC
 
 *** Powerline and airline-theme 
@@ -717,17 +718,28 @@ Also, to ensure we always compile and use updated packages:
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
+
 *** Elipsis in org
 
 #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
 #+END_SRC
 
+
 *** Make TAB act if it were issued in a buffer of the language's major mode.
 
 #+BEGIN_SRC emacs-lisp
    (setq org-src-tab-acts-natively t)
 #+END_SRC
+
+
+*** Org-Reveal
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-reveal
+    :pin melpa)
+#+END_SRC
+
 
 *** Make windmove work in org-mode
 
