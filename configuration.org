@@ -3,6 +3,12 @@
 #+EMAIL: jpedrodelacerda@gmail.com
 #+OPTIONS: toc:nil num:nil
 
+* $ whoami
+
+#+BEGIN_SRC emacs-lisp
+  (setq home (concat "/home/" (eval user-login-name)))
+#+END_SRC
+
 
 * Configure =use-package=
 
@@ -364,8 +370,8 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (use-package ycmd
 	:init
-	(setq ycmd-server-command '("python" "/home/joao/YouCompleteMe/third_party/ycmd/ycmd"))
-    (set-variable 'ycmd-global-config "/home/jpedrodelacerda/YouCompleteMe/.ycm_extra_conf.py")
+    (setq ycmd-server-command `("python" ,(concat home "/YouCompleteMe/third_party/ycmd/ycmd")))
+    (set-variable 'ycmd-global-config (concat home "/YouCompleteMe/.ycm_extra_conf.py"))
 	(add-hook 'after-init-hook #'global-ycmd-mode))
 #+END_SRC
 
@@ -567,7 +573,7 @@ Also, to ensure we always compile and use updated packages:
   Setting =$GOPATH=
 
 #+BEGIN_SRC emacs-lisp
-  (setenv "GOPATH" "/home/jpedrodelacerda/go")
+  (setenv "GOPATH" (concat home "/go"))
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
 #+END_SRC
 
