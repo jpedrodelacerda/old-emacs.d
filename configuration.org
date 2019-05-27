@@ -9,6 +9,12 @@
   (setq home (concat "/home/" (eval user-login-name)))
 #+END_SRC
 
+Enable ssh-agent for emacs server
+#+BEGIN_SRC emacs-lisp
+  (use-package keychain-environment
+    :init (keychain-refresh-environment))
+#+END_SRC
+
 
 * Configure =use-package=
 
@@ -68,7 +74,7 @@ Also, to ensure we always compile and use updated packages:
 
 
 * Utilities
-  
+
 #+BEGIN_SRC emacs-lisp
 
   (defun jpdl/create-newline-and-enter-sexp (&rest _ignored)
@@ -138,13 +144,13 @@ Also, to ensure we always compile and use updated packages:
   (use-package all-the-icons)
 #+END_SRC
 
-*** Trying Ample and taking some time off gruvbox-dark theme.
+*** Back to gruvbox.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ample-theme
+  (use-package gruvbox-theme 
     :config
-	(load-theme 'ample t)
-    (enable-theme 'ample))
+	(load-theme 'gruvbox-dark-soft)
+    (enable-theme 'gruvbox-dark-soft))
 #+END_SRC
 
 *** Powerline and airline-theme 
@@ -167,8 +173,8 @@ Also, to ensure we always compile and use updated packages:
  
 #+BEGIN_SRC emacs-lisp
   (use-package airline-themes
-    :config
-    (load-theme 'airline-gruvbox-dark))
+	:config
+	(load-theme 'airline-gruvbox-dark t))
 #+END_SRC
  
   # ICONS!!!
@@ -715,15 +721,17 @@ Also, to ensure we always compile and use updated packages:
 
 
 * Org Mode
+
 ** General configuration for Org
 
 *** Org bullets
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+	:config
+	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
+
 
 *** Elipsis in org
 
