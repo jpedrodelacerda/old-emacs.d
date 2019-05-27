@@ -144,6 +144,7 @@ Also, to ensure we always compile and use updated packages:
   (use-package all-the-icons)
 #+END_SRC
 
+<<<<<<< HEAD
 *** Back to gruvbox.
 
 #+BEGIN_SRC emacs-lisp
@@ -151,6 +152,15 @@ Also, to ensure we always compile and use updated packages:
     :config
 	(load-theme 'gruvbox-dark-soft)
     (enable-theme 'gruvbox-dark-soft))
+=======
+*** Solarized Dark for now.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solarized-theme
+    :config
+	(load-theme 'solarized-dark t)
+    (enable-theme 'solarized-dark))
+>>>>>>> 6a4fbe5e67497761d393a7dd1c8297e12546e481
 #+END_SRC
 
 *** Powerline and airline-theme 
@@ -173,8 +183,13 @@ Also, to ensure we always compile and use updated packages:
  
 #+BEGIN_SRC emacs-lisp
   (use-package airline-themes
+<<<<<<< HEAD
 	:config
 	(load-theme 'airline-gruvbox-dark t))
+=======
+    :config
+    (load-theme 'airline-solarized-alternate-gui))
+>>>>>>> 6a4fbe5e67497761d393a7dd1c8297e12546e481
 #+END_SRC
  
   # ICONS!!!
