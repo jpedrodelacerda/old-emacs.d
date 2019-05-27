@@ -144,7 +144,6 @@ Also, to ensure we always compile and use updated packages:
   (use-package all-the-icons)
 #+END_SRC
 
-<<<<<<< HEAD
 *** Back to gruvbox.
 
 #+BEGIN_SRC emacs-lisp
