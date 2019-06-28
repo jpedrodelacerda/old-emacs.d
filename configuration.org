@@ -262,14 +262,34 @@ Also, to ensure we always compile and use updated packages:
 
 ** Handling buffers/windows and shit
 
+#+BEGIN_SRC emacs-lisp
+  (defun split-window-vertically-and-switch ()
+	"After splitting the window, also switch to it."
+	(interactive)
+	(split-window-vertically)
+	(other-window 1))
+
+  (defun split-window-horizontally-and-switch ()
+	"After splitting the window, also switch to it."
+	(interactive)
+	(split-window-horizontally)
+	(other-window 1))
+
+#+END_SRC
+
+
   To move between buffers with Meta and arrows
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-<up>") 'windmove-up)
-  (global-set-key (kbd "M-<down>") 'windmove-down)
-  (global-set-key (kbd "M-<right>") 'windmove-right)
-  (global-set-key (kbd "M-<left>") 'windmove-left)
+  (use-package windmove
+	:bind (("M-<up>"    . windmove-up   )
+		   ("M-<down>"  . windmove-down )
+		   ("M-<right>" . windmove-right)
+		   ("M-<left>"  . windmove-left )
+		   ("C-M-r"     . split-window-horizontally-and-switch)
+		   ("C-M-d"     . split-window-vertically-and-switch)
+           ))
 #+END_SRC
-   
+
 
 ** Excuse me, sir. Do you know where I am?
 
@@ -390,19 +410,29 @@ Also, to ensure we always compile and use updated packages:
 #+END_SRC
 
 
-
 ** =dumb-jump=
 
   It seems nice and handy. Because it is.
   Here I set:
     - General shortcuts:
-		  - =M-.= to jump to definition
+	  - =M-.= to jump to definition
+	  - =M-g j= to jump to definition
+	  - =M-g o= jump on other window
+	  - =M-g x= jump to external
+	  - =M-g z= jump to external on other window
 
 #+BEGIN_SRC emacs-lisp
   (use-package dumb-jump
+	:bind (
+    ("M-." . dumb-jump-go)
+    ("M-g o" . dumb-jump-go-other-window)
+	("M-g j" . dumb-jump-go)
+	("M-g i" . dumb-jump-go-prompt)
+	("M-g x" . dumb-jump-go-prefer-external)
+	("M-g z" . dumb-jump-go-prefer-external-other-window))
     :config
     (define-key evil-normal-state-map (kbd "M-.") 'dumb-jump-go)
-    (setq dumb-jump-selector 'ivy))
+	(setq dumb-jump-selector 'ivy))
 #+END_SRC
 
 ** =flycheck=
@@ -527,7 +557,14 @@ Also, to ensure we always compile and use updated packages:
     (smartparens-global-mode 1))
 #+END_SRC
 
-** Nerd-Commenter
+** =rainbow-delimiters=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+END_SRC
+
+** =Nerd-Commenter=
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil-nerd-commenter
@@ -557,6 +594,74 @@ Also, to ensure we always compile and use updated packages:
   (setq compilation-scroll-output t)
 #+END_SRC
 
+# ** LSP
+
+# #+BEGIN_SRC emacs-lisp
+# (defvar lsp-language-id-configuration
+#   '((go-mode . "go")
+#    (python-mode . "python")
+#    )
+# #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (use-package lsp-mode
+#     :hook ((go-mode . lsp)
+# 		   (python-mode . lsp)
+#             () )
+#     :commands lsp)
+# #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (use-package lsp-ui
+#     :commands lsp-ui-mode)
+# #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (use-package company-lsp
+#     :commands company-lsp)
+# #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+# (lsp-register-client
+#  (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
+#                   :major-modes '(python-mode)
+#                   :server-id 'pyls))
+
+# (lsp-register-client
+#  (make-lsp-client :new-connection (lsp-stdio-connection "gopls")
+#                   :major-modes '(go-mode)
+#                   :server-id 'gopls))
+# #+END_SRC
+
+** Angular
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ng2-mode
+    :mode "\\.ts\\'")
+#+END_SRC
+
+** Ansible
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ansible
+   :mode ("\\.yml\\'"
+	      "\\.yaml\\'"))
+#+END_SRC
+
+** Dockerfiles
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode
+    :mode "Dockerfile$")
+#+END_SRC
+
+** JavaScript
+
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :mode "\\.js\\'")
+#+END_SRC
+
 ** Go
 
   Install =go-mode= and related packages
@@ -568,12 +673,12 @@ Also, to ensure we always compile and use updated packages:
   (use-package go-eldoc
     :config
     (add-hook 'go-mode-hook 'go-eldoc-setup))
-  ;(use-package company-go
-  ;  :config
-  ;  (add-hook 'go-mode-hook (lambda ()
-  ;                        (set (make-local-variable 'company-backends) '(company-go))
-  ;                        (company-mode)))
-  ;  (add-hook 'before-save-hook 'gofmt-before-save))
+  (use-package company-go
+   :config
+   (add-hook 'go-mode-hook (lambda ()
+                         (set (make-local-variable 'company-backends) '(company-go))
+                         (company-mode)))
+   (add-hook 'before-save-hook 'gofmt-before-save))
 #+END_SRC
 
   Setting =$GOPATH=
@@ -582,46 +687,6 @@ Also, to ensure we always compile and use updated packages:
   (setenv "GOPATH" (concat home "/go"))
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
 #+END_SRC
-
-
-** Rust
-
-  TOML support.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package toml-mode
-    :mode "\\.toml\\'")
-#+END_SRC
-
-  =rust-mode=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :mode "\\.rs\\'")
-#+END_SRC
-
-  Cargo and hooks
-
-#+BEGIN_SRC emacs-lisp
-  (use-package cargo
-    :hook (rust-mode . cargo-minor-mode))
-#+END_SRC
-
-  Flycheck4Rust
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck-rust
-    :hook (flycheck-mode . flycheck-rust-setup))
-#+END_SRC
-
-  And finally, =racer=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package racer
-    :hook ((rust-mode . racer-mode)
-           (racer-mode . eldoc-mode)))
-#+END_SRC
-
 
 ** Python
 
@@ -689,6 +754,43 @@ Also, to ensure we always compile and use updated packages:
     # (add-hook 'python-mode-hook 'jedi:setup))
 # #+END_SRC
 
+** Rust
+
+  TOML support.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package toml-mode
+    :mode "\\.toml\\'")
+#+END_SRC
+
+  =rust-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+    :mode "\\.rs\\'")
+#+END_SRC
+
+  Cargo and hooks
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cargo
+    :hook (rust-mode . cargo-minor-mode))
+#+END_SRC
+
+  Flycheck4Rust
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-rust
+    :hook (flycheck-mode . flycheck-rust-setup))
+#+END_SRC
+
+  And finally, =racer=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package racer
+    :hook ((rust-mode . racer-mode)
+           (racer-mode . eldoc-mode)))
+#+END_SRC
 
 ** sh
 
@@ -721,7 +823,7 @@ Also, to ensure we always compile and use updated packages:
 
 
 * Org Mode
-
+  
 ** General configuration for Org
 
 *** Org bullets
@@ -736,7 +838,8 @@ Also, to ensure we always compile and use updated packages:
 *** Elipsis in org
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis "⤵")
+  (setq org-ellipsis "...")
+  ;; (setq org-ellipsis " ⤵")
 #+END_SRC
 
 
@@ -778,7 +881,7 @@ Also, to ensure we always compile and use updated packages:
 ** Configure =yasnippet=
 
   Tell me a package more awesome than yasnippet and fail.
-  Saving my snippets @ 
+  Saving my snippets @ ~/.emacs.d/snippets/text-mode.
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -841,8 +944,25 @@ Also, to ensure we always compile and use updated packages:
 #+END_SRC
 
 
+* General stuff
+
+Highlight parens 
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
+#+END_SRC
+
+
 * General shortcuts
 
+C(lic)k to kill
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-k") 'kill-buffer-and-window)
 #+END_SRC
+
+C-' to insert parens
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-'") 'insert-parentheses)
+#+END_SRC
+
+
+* Enjoy! =)
