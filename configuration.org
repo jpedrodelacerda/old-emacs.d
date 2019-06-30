@@ -370,7 +370,6 @@ Also, to ensure we always compile and use updated packages:
     :config
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-transformers '(company-sort-by-occurrence))
-    (add-to-list 'company-backends 'company-ansible)
     :bind
     ("C-<tab>" . company-complete-common-or-cycle)
 	("C-'" . company-complete))
@@ -389,26 +388,28 @@ Also, to ensure we always compile and use updated packages:
 	(company-flx-mode +1))
 #+END_SRC
 
-** YouCompleteMe
-
-  Best autocompletion ever.
+** =lsp-mode=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ycmd
-	:init
-    (setq ycmd-server-command `("python" ,(concat home "/YouCompleteMe/third_party/ycmd/ycmd")))
-    (set-variable 'ycmd-global-config (concat home "/YouCompleteMe/.ycm_extra_conf.py"))
-	(add-hook 'after-init-hook #'global-ycmd-mode))
+  (use-package lsp-mode
+	:hook (
+	  (go-mode . lsp)
+	  (python-mode . lsp))
+	:commands lsp)
+
+	  (defvar lsp-language-id-configuration
+	   '((go-mode . "go")
+		 (anaconda-mode . "python")))
+
+  (use-package lsp-ui
+	:commands lsp-ui-mode)
+
+  (use-package company-lsp
+	:commands company-lsp)
+
+  (use-package helm-lsp
+	:commands helm-lsp-workspace-symbol)
 #+END_SRC
-
-  Company and YCM
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-ycmd
-    :init
-    (company-ycmd-setup))  
-#+END_SRC
-
 
 ** =dumb-jump=
 
@@ -594,45 +595,6 @@ Also, to ensure we always compile and use updated packages:
   (setq compilation-scroll-output t)
 #+END_SRC
 
-# ** LSP
-
-# #+BEGIN_SRC emacs-lisp
-# (defvar lsp-language-id-configuration
-#   '((go-mode . "go")
-#    (python-mode . "python")
-#    )
-# #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-#   (use-package lsp-mode
-#     :hook ((go-mode . lsp)
-# 		   (python-mode . lsp)
-#             () )
-#     :commands lsp)
-# #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-#   (use-package lsp-ui
-#     :commands lsp-ui-mode)
-# #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-#   (use-package company-lsp
-#     :commands company-lsp)
-# #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-# (lsp-register-client
-#  (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
-#                   :major-modes '(python-mode)
-#                   :server-id 'pyls))
-
-# (lsp-register-client
-#  (make-lsp-client :new-connection (lsp-stdio-connection "gopls")
-#                   :major-modes '(go-mode)
-#                   :server-id 'gopls))
-# #+END_SRC
-
 ** Angular
 
 #+BEGIN_SRC emacs-lisp
@@ -647,6 +609,16 @@ Also, to ensure we always compile and use updated packages:
    :mode ("\\.yml\\'"
 	      "\\.yaml\\'"))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-ansible
+   :after
+   (company)
+   :mode ("\\.yml\\'"
+          "\\.yaml\\'"))
+  (add-to-list 'company-backends 'company-ansible)
+#+END_SRC
+
 
 ** Dockerfiles
 
@@ -669,10 +641,13 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
     :mode "\\.go\\'")
+
   (use-package go-errcheck)
+
   (use-package go-eldoc
     :config
     (add-hook 'go-mode-hook 'go-eldoc-setup))
+
   (use-package company-go
    :config
    (add-hook 'go-mode-hook (lambda ()
@@ -957,11 +932,6 @@ Highlight parens
 C(lic)k to kill
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-k") 'kill-buffer-and-window)
-#+END_SRC
-
-C-' to insert parens
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-'") 'insert-parentheses)
 #+END_SRC
 
 
