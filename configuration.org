@@ -619,6 +619,12 @@ Also, to ensure we always compile and use updated packages:
   (add-to-list 'company-backends 'company-ansible)
 #+END_SRC
 
+** Jinja2
+
+#+BEGIN_SRC emacs-lisp
+  (use-package jinja2-mode
+    :mode "\\.j2\\'")
+#+END_SRC
 
 ** Dockerfiles
 
@@ -781,9 +787,10 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
-    :mode
-    "\\.html$"
-    "\\.php$")
+	:mode
+    "\\.gohtml$"
+	"\\.html$"
+	"\\.php$")
 #+END_SRC
 
   Setting things up:
@@ -795,6 +802,26 @@ Also, to ensure we always compile and use updated packages:
             (lambda ()
               (rainbow-mode)
               (setq web-mode-markup-indent-offset 2)))
+#+END_SRC
+
+** =emmet-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+	:mode
+	"\\.gohtml$"
+    "\\.html$"
+    "\\.php$")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-web
+    :mode
+	"\\.gohtml$"
+    "\\.html$"
+    "\\.php$"
+    :config
+    (add-to-list 'company-backends 'company-ansible))
 #+END_SRC
 
 
