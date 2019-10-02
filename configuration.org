@@ -211,7 +211,7 @@ Also, to ensure we always compile and use updated packages:
 ** Font and resizing
 
 #+BEGIN_SRC emacs-lisp
-  (setq default-font "Hack")
+  (setq default-font "Fira Code")
   (setq default-font-size 10)
   (setq current-font-size default-font-size)
   
