@@ -573,7 +573,7 @@ Also, to ensure we always compile and use updated packages:
 #+END_SRC
 
 
-* Programing Environments
+* Environments
   
   A'ight, first I prefer tabs being 4 spaces.
 
@@ -783,6 +783,28 @@ Also, to ensure we always compile and use updated packages:
                     sh-indentation 2)))
 #+END_SRC
 
+** Terraform
+
+#+BEGIN_SRC emacs-lisp
+  (use-package terraform-mode
+    :config '(terraform-indent-level 4))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-terraform
+	:after company
+    :mode 
+    "\\.tf$"
+    "\\.tfvars$"
+    "\\.tfstate$"
+    :config (company-terraform-init))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
 ** =web-mode=
 
 #+BEGIN_SRC emacs-lisp
@@ -799,9 +821,9 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'web-mode-hook
-            (lambda ()
-              (rainbow-mode)
-              (setq web-mode-markup-indent-offset 2)))
+			(lambda ()
+			  (rainbow-mode)
+			  (setq web-mode-markup-indent-offset 2)))
 #+END_SRC
 
 ** =emmet-mode=
