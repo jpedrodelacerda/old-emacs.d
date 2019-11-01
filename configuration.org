@@ -606,6 +606,7 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package ansible
+   :after (yaml-mode)
    :mode ("\\.yml\\'"
 	      "\\.yaml\\'"))
 #+END_SRC
@@ -615,8 +616,8 @@ Also, to ensure we always compile and use updated packages:
    :after
    (company)
    :mode ("\\.yml\\'"
-          "\\.yaml\\'"))
-  (add-to-list 'company-backends 'company-ansible)
+          "\\.yaml\\'")
+   :config (add-to-list 'company-backends 'company-ansible))
 #+END_SRC
 
 ** Dockerfiles
@@ -822,6 +823,14 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
 
+#+END_SRC
+
+** =yaml-mode=
+
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :mode ("\\.yml\\'"
+         "\\.yaml\\'"))
 #+END_SRC
 
 ** =web-mode=
