@@ -807,16 +807,15 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package terraform-mode
-    :config '(terraform-indent-level 4))
+    :config '(terraform-indent-level 4)
+    :mode ("\\.tf$"
+           "\\.tfvars$"
+           "\\.tfstate$"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   (use-package company-terraform
-	:after company
-    :mode 
-    "\\.tf$"
-    "\\.tfvars$"
-    "\\.tfstate$"
+	:after (company terraform-mode)
     :config (company-terraform-init))
 #+END_SRC
 
