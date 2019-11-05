@@ -620,6 +620,13 @@ Also, to ensure we always compile and use updated packages:
    :config (add-to-list 'company-backends 'company-ansible))
 #+END_SRC
 
+** API Blueprint
+
+#+BEGIN_SRC emacs-lisp
+  (use-package apib-mode
+    :mode "\\.apib\\'")
+#+END_SRC
+
 ** Dockerfiles
 
 #+BEGIN_SRC emacs-lisp
@@ -671,8 +678,6 @@ Also, to ensure we always compile and use updated packages:
   (use-package grip-mode
     :after markdown-mode)
 #+END_SRC
-
-
 
 ** Go
 
