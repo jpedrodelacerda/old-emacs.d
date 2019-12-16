@@ -953,6 +953,25 @@ Also, to ensure we always compile and use updated packages:
  #+END_SRC
 
 
+** Trying emacs-jupyter output
+
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (jupyter . t)))
+#+END_SRC
+
+Setting default parameters for python
+
+#+BEGIN_SRC emacs-lisp
+(setq org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                    (:session . "py")
+                                                    (:kernel . "python3")))
+#+END_SRC
+
+
 * Editing Settings
   
 ** Install and configure =which-key=
