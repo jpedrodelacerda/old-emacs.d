@@ -956,6 +956,12 @@ Also, to ensure we always compile and use updated packages:
 ** Trying emacs-jupyter output
 
 #+BEGIN_SRC emacs-lisp
+(use-package emacs-jupyter
+  :ensure t)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
