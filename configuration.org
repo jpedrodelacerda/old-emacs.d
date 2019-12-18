@@ -956,7 +956,7 @@ Also, to ensure we always compile and use updated packages:
 ** Trying emacs-jupyter output
 
 #+BEGIN_SRC emacs-lisp
-(use-package emacs-jupyter
+(use-package jupyter
   :ensure t)
 #+END_SRC
 
