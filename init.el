@@ -16,8 +16,6 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
-;;(add-to-list 'package-archives
-;;			 '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 ;; Ensure that use-package is installed.
@@ -29,7 +27,24 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(org-babel-load-file "~/.emacs.d/configuration.org")
+;; Makes sure that all packages are present
+(setq use-package-always-ensure t)
+
+;; Ensure to always compile
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
+
+(setq load-prefer-newer t)
+;; (org-babel-load-file "~/.emacs.d/configuration.org")
+
+;; Booting
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(require 'jpdl/user)
+(require 'jpdl/utils)
+(require 'jpdl/ux)
+(require 'jpdl/managers)
+(require 'jpdl/org)
+(require 'jpdl/prog)
 
 (provide 'init.el)
 ;;; init.el ends here
