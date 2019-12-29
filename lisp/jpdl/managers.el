@@ -25,6 +25,7 @@
   :bind
   ("C-<tab>" . company-complete-common-or-cycle)
   ("C-'" . company-complete))
+
 (global-company-mode)
 
 ;;; Fuzzing
@@ -37,33 +38,40 @@
 ;; LSP completes me
 (use-package lsp-mode
   :commands (lsp)
-  :hook (
+  :bind (:map lsp-mode-map
+		 (("C-c C-f" . lsp-format-buffer)))
+  :hook ((elixir-mode . lsp)
 		 (go-mode . lsp)
 		 (python-mode . lsp))
+  :custom
+  (lsp-prefer-flymake nil)
   :config
   (use-package company-lsp
 	:config
-	(add-to-list 'company-backends 'company-lsp)))
-
-(defvar lsp-language-id-configuration
-  '((go-mode . "go")
-	(anaconda-mode . "python")))
+	(push 'company-lsp company-backends)))
 
 (use-package lsp-ui
-  :commands lsp-ui-mode)
-
-;; dumbjumps
-(use-package dumb-jump
-  :bind (
-		 ("M-." . dumb-jump-go)
-		 ("M-g o" . dumb-jump-go-other-window)
-		 ("M-g j" . dumb-jump-go)
-		 ("M-g i" . dumb-jump-go-prompt)
-		 ("M-g x" . dumb-jump-go-prefer-external)
-		 ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :after lsp-mode
+  :commands lsp-ui-mode
+  :diminish
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-c u" . lsp-ui-imenu))
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-position 'top)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions t)
   :config
-  (define-key evil-normal-state-map (kbd "M-.") 'dumb-jump-go)
-  (setq dumb-jump-selector 'ivy))
+  (setq lsp-ui-doc-use-webkit t)
+  )
 
 ;; Checking for errors
 (use-package flycheck
@@ -86,7 +94,6 @@
 
 ;; Handle projects
 (use-package projectile
-  :ensure t
   :config
   (projectile-mode 1)
   (setq projectile-project-search-path '("~/"))
@@ -98,7 +105,6 @@
   :bind-keymap ("C-c p" . projectile-command-map))
 
 (use-package helm-projectile
-  :ensure t
   :init (helm-projectile-on))
 
 ;; Browse directories and projects
@@ -117,15 +123,16 @@
 
 ;; tokens beutifier and completer
 (use-package smartparens
-  :ensure t
-  :init
+  :diminish smartparens-mode
   :bind ("C-SPC" . sp-forward-sexp)
-  :config
-  (sp-pair "{" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-  (sp-pair "[" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-  (sp-pair "(" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-  (require 'smartparens-config)
-  (smartparens-global-mode 1))
+  :commands (smartparens-mode show-smartparens-mode)
+  :init
+  (smartparens-global-mode 1)
+  (smartparens-strict-mode 1)
+  (show-smartparens-global-mode t)
+  (setq smartparens-global-mode t)
+  (require 'smartparens-config))
+
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 

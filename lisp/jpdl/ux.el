@@ -3,7 +3,6 @@
 
 ;;; Code:
 
-(require 'use-package)
 (require 'org)
 
 (tool-bar-mode -1)
@@ -78,6 +77,7 @@
   :config
   (evil-mode 1)
   (setq evil-emacs-state-mode nil)
+  (define-key evil-normal-state-map (kbd "M-.") 'xref-find-definitions)
   :bind
   ("C-s" . evil-write))
 
