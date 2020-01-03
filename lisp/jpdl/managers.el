@@ -23,7 +23,7 @@
   (add-hook 'after-init-hook 'global-company-mode)
   (setq company-transformers '(company-sort-by-occurrence))
   :bind
-  ("C-<tab>" . company-complete-common-or-cycle)
+  ;; ("C-<tab>" . company-complete-common-or-cycle)
   ("C-'" . company-complete))
 
 (global-company-mode)
