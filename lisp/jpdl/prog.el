@@ -9,6 +9,7 @@
 (use-package subword
   :config
   (global-subword-mode))
+
 (setq compilation-scroll-output t)
 
 ;; Angular

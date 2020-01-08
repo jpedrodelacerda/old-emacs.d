@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(global-auto-revert-mode t)
+
 ;; Helm
 (use-package helm
   :config
