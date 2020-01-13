@@ -61,8 +61,11 @@
     "C-c a v"   "eval"
     "C-c a o"   "macroexpand"
     "C-c a f"   "info")
-  (add-hook 'before-save-hook 'elixir-format)
   )
+
+;; Lua
+(use-package lua-mode
+  :mode "\\.lua\\'")
 
 ;; Jinja2
 (use-package jinja2-mode
