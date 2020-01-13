@@ -39,18 +39,22 @@
 (use-package org-agenda
   :ensure nil
   :after org
-  :bind ("C-c c" . org-capture)
+  :bind (("C-c c" . org-capture)
+		 ("C-c a" . org-agenda)
+		 ("C-c l" . org-agenda-list))
   :config
   (setq org-agenda-files (quote ("~/MEGAsync/agenda/pessoal.org"
 								 "~/MEGAsync/agenda/gris.org"
 								 "~/MEGAsync/agenda/eci.org"
 								 "~/MEGAsync/agenda/capgov.org"
+								 "~/MEGAsync/agenda/wishlist.org"
 								 )))
   (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
   (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+      (quote ((sequence "TODO(t)" "NEXT(n)" "TRIP(t)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")
+			  (sequence "WISHLIST" "|" "BOUGHT"))))
   (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
@@ -59,6 +63,9 @@
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("MEETING" :foreground "forest green" :weight bold)
+			  ("TRIP" :foreground "blue" :weight bold)
+			  ("WISHLIST" :foreground "red" :weight bold)
+			  ("BOUGHT" "forest green" :weight bold)
               ("PHONE" :foreground "forest green" :weight bold))))
 
   (setq org-todo-state-tags-triggers
@@ -66,20 +73,24 @@
               ("WAITING" ("WAITING" . t))
               ("HOLD" ("WAITING") ("HOLD" . t))
               (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD") ("WISHLIST") ("TRIP"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD") ("WISHLIST"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD") ("BOUGHT")))))
 
   (setq org-capture-templates
       (quote (("t" "todo" entry (file "~/MEGAsync/agenda/refile.org")
                "* TODO %?\n%U\n")
-              ("r" "respond" entry (file "~/MEGAsync/agenda/refile.org")
+              ("a" "respond" entry (file "~/MEGAsync/agenda/refile.org")
                "* NEXT Responder %:from sobre %:subject\nSCHEDULED: %t\n%U\n%a\n" :immediate-finish t)
               ("n" "note" entry (file "~/MEGAsync/agenda/refile.org")
                "* %? :NOTE:\n%U\n%a\n")
+              ("v" "trip" entry (file "~/MEGAsync/agenda/refile.org")
+               "* TRIP %? \n  SCHEDULED: \n%U\n")
               ("j" "Journal" entry (file+datetree "~/MEGAsync/agenda/journal.org")
                "* %?\n%U\n")
-              ("w" "org-protocol" entry (file "~/MEGAsync/agenda/refile.org")
+              ("w" "wishlist" entry (file "~/MEGAsync/agenda/wishlist.org")
+               "* WISHLIST %?\n%U\n")
+              ("r" "org-protocol" entry (file "~/MEGAsync/agenda/refile.org")
                "* TODO Revisar %c\n%U\n" :immediate-finish t)
               ("m" "Reunião" entry (file "~/MEGAsync/agenda/refile.org")
                "* MEETING %? :MEETING:\n%U")
