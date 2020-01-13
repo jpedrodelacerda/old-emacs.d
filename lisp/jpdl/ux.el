@@ -13,6 +13,10 @@
 ;; Small indicator for empty lines
 (setq-default indicate-empty-lines t)
 
+;; No tabs
+(setq tab-width 4)
+(setq indent-tabs-mode nil)
+
 ;; no scroll bars
 (set-window-scroll-bars (minibuffer-window) nil nil)
 
@@ -197,15 +201,6 @@
 (use-package counsel
   :init  
   (setq counsel-mode t))
-
-;; Solaire highlights active buffer
-
-(use-package solaire-mode
-  :hook (((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-         (minibuffer-setup . solaire-mode-in-minibuffer))
-  :config
-  (solaire-global-mode)
-  (solaire-mode-swap-bg))
 
 (use-package diff-hl
   :config
