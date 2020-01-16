@@ -1,8 +1,12 @@
-;;; jpdl/prog --- Summary:
+;; jpdl/prog --- Summary:
 
 ;;; Commentary:
 
 ;;; Code:
+
+(require 'use-package)
+(require 'jpdl/utils)
+(require 'jpdl/managers)
 
 (setq-default tab-width 4)
 
@@ -39,7 +43,8 @@
 
 ;; Elixir
 (use-package elixir-mode
-  :ensure t
+  :config
+  (add-hook 'before-save-hook 'elixir-format)
   :mode ("\\.exs\\'"
          "\\.ex\\'")
   )
@@ -119,80 +124,81 @@
   (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
 (use-package company-anaconda
-:after company
-:config
-(add-to-list 'company-backends 'company-anaconda))
+  :after company
+  :config
+  (add-to-list 'company-backends 'company-anaconda))
 
 ;; TOML support.
 (use-package toml-mode
-:mode "\\.toml\\'")
+  :mode "\\.toml\\'")
 
 
 ;;  =rust-mode=
 (use-package rust-mode
-:mode "\\.rs\\'")
+  :mode "\\.rs\\'")
 
 (use-package cargo
-:hook (rust-mode . cargo-minor-mode))
+  :hook (rust-mode . cargo-minor-mode))
 
 (use-package flycheck-rust
-:hook (flycheck-mode . flycheck-rust-setup))
+  :hook (flycheck-mode . flycheck-rust-setup))
 
 (use-package racer
-:hook ((rust-mode . racer-mode)
-       (racer-mode . eldoc-mode)))
+  :hook ((rust-mode . racer-mode)
+		 (racer-mode . eldoc-mode)))
 
 ;; sh
 (add-hook 'sh-mode-hook
-(lambda ()
-  (setq sh-basic-offset 2
-        sh-indentation 2)))
+		  (lambda ()
+			(setq sh-basic-offset 2
+				  sh-indentation 2)))
 
 ;; Terraform
 (use-package terraform-mode
-:config '(terraform-indent-level 4)
-:mode ("\\.tf$"
-       "\\.tfvars$"
-       "\\.tfstate$"))
+  :config '(terraform-indent-level 4)
+  :mode ("\\.tf$"
+		 "\\.tfvars$"
+		 "\\.tfstate$"))
 
 (use-package company-terraform
-:after (company terraform-mode)
-:config (company-terraform-init))
+  :after (company terraform-mode)
+  :config (company-terraform-init))
 
 ;; =yaml-mode=
 (use-package yaml-mode
-:mode ("\\.yml\\'"
-       "\\.yaml\\'"))
+  :mode ("\\.yml\\'"
+		 "\\.yaml\\'"))
 
 
 ;; =web-mode=
 (use-package web-mode
-:mode
-"\\.gohtml$"
-"\\.html$"
-"\\.php$")
+  :mode
+  "\\.eex$"
+  "\\.gohtml$"
+  "\\.html$"
+  "\\.php$")
 
 (add-hook 'web-mode-hook
-(lambda ()
-  (rainbow-mode)
-  (setq web-mode-markup-indent-offset 2)))
+		  (lambda ()
+			(rainbow-mode)
+			(setq web-mode-markup-indent-offset 2)))
 
 
 ;; =emmet-mode=
 (use-package emmet-mode
-:mode
-"\\.gohtml$"
-"\\.html$"
-"\\.php$")
+  :mode
+  "\\.gohtml$"
+  "\\.html$"
+  "\\.php$")
 
 
 (use-package company-web
-:mode
-"\\.gohtml$"
-"\\.html$"
-"\\.php$"
-:config
-(add-to-list 'company-backends 'company-ansible))
+  :mode
+  "\\.gohtml$"
+  "\\.html$"
+  "\\.php$"
+  :config
+  (add-to-list 'company-backends 'company-ansible))
 
 (provide 'jpdl/prog)
 ;;; jpdl/prog.el ends here
