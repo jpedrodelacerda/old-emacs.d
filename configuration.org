@@ -9,13 +9,6 @@
   (setq home (concat "/home/" (eval user-login-name)))
 #+END_SRC
 
-Enable ssh-agent for emacs server
-#+BEGIN_SRC emacs-lisp
-  (use-package keychain-environment
-    :init (keychain-refresh-environment))
-#+END_SRC
-
-
 * Configure =use-package=
 
   This setup uses =use-package= to make sure that all packages are installed before loading them.
@@ -98,9 +91,7 @@ Also, to ensure we always compile and use updated packages:
 
 * UI Preferences
   
-
 ** Tweaking Window
-
 ***   Disabling menu bar and scroll bar because they just take space up.
 
 #+BEGIN_SRC emacs-lisp
@@ -114,6 +105,7 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode -1)
 #+END_SRC
+
 *** Getting rid of the tiny scroll bar on minibuffer:
 
 #+BEGIN_SRC emacs-lisp
@@ -126,7 +118,6 @@ Also, to ensure we always compile and use updated packages:
   (setq frame-title-format '((:eval (projectile-project-name))))
 #+END_SRC
 
-
 ** No start-up-message
    
   Really, why would I want this?
@@ -134,7 +125,6 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
 #+END_SRC
-
 
 ** Theming
 
@@ -153,51 +143,27 @@ Also, to ensure we always compile and use updated packages:
     (enable-theme 'gruvbox-dark-soft))
 #+END_SRC
 
-*** Powerline and airline-theme 
+*** Doom modeline for now
 
 #+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :init
-    (setq powerline-default-separator 'arrow
-          powerline-default-separator-dir (quote (left . right))
-          powerline-height 18
-          powerline-display-buffer-size nil
-          powerline-display-hud nil
-          powerline-display-mule-info nil
-          powerline-gui-use-vcs-glyph t
-          powerline-inactive1 '((t (:background "grey11" :foreground "#c5c8c6")))
-          powerline-inactive2 '((t (:background "grey20" :foreground "#c5c8c6"))))
-    :config
-    (powerline-default-theme))
+;; Doom-modeline
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode)
+  :custom-face
+  (doom-modeline-evil-emacs-state ((t (:inherit bold :foreground "dark magenta"))))
+  (doom-modeline-evil-insert-state ((t (:inherit bold :foreground "deep sky blue"))))
+  :config
+  (setq doom-modeline-major-mode-icon t)
+  (setq doom-modeline-major-mode-color-icon t)
+  (setq doom-modeline-lsp t)
+  (setq doom-modeline-modal-icon t)
+  (setq doom-modeline-vcs-icon t)
+  (setq find-file-visit-truename t)
+  (setq doom-modeline-project-detection 'project)
+  (setq doom-modeline-vcs-max-length 12)
+  (setq doom-modeline-icon (display-graphic-p))
+  (setq doom-modeline-minor-modes (featurep 'minions)))
 #+END_SRC
- 
-#+BEGIN_SRC emacs-lisp
-  (use-package airline-themes
-	:config
-	(load-theme 'airline-gruvbox-dark t))
-#+END_SRC
- 
-  # ICONS!!!
-  # 
-# #+BEGIN_SRC emacs-lisp
-  # (defun powerline-get-icon (name alt-sym help-message)
-    # "Returns a propertized icon if available, otherwise, returns ALT-SYM."
-    # (propertize alt-sym 'help-echo help-message))
-	# 
-  # (defun powerline-modified ()
-    # (condition-case ex
-        # (let ((state (vc-git-state (buffer-file-name))))
-          # (cond ((buffer-modified-p)  (powerline-get-icon "pencil" "✦" "Modified buffer"))
-                # ((eq state 'edited)   (powerline-get-icon "pencil" "✦" "Modified buffer, unregistered changes"))
-                # ((eq state 'unregistered) (powerline-get-icon "question" "❓" "Unregistered file in VCS"))
-                # ((eq state 'missing)  (powerline-get-icon "exclamation" "⁈" "File exists only in VCS, not on the hard disk"))
-                # ((eq state 'ignored)  (powerline-get-icon "ban" "♟" "Ignored file in VCS"))
-                # ((eq state 'added)    (powerline-get-icon "plus" "➕" "File will be registered in VCS in the next commit"))
-                # (t " ")))
-      # (error (powerline-get-icon "exclamation" "⁈" (car ex)))))
-# #+END_SRC
-
-
 
 ** And this is supposed to be (+18), so no minors. (Just kidding, if you're under 18 just go play some Magic or whatever)
 
@@ -206,7 +172,6 @@ Also, to ensure we always compile and use updated packages:
     :config
 	(minions-mode 1))
 #+END_SRC
-
 
 ** Font and resizing
 
@@ -259,7 +224,6 @@ Also, to ensure we always compile and use updated packages:
   (reset-font-size)
 #+END_SRC
 
-
 ** Handling buffers/windows and shit
 
 #+BEGIN_SRC emacs-lisp
@@ -290,7 +254,6 @@ Also, to ensure we always compile and use updated packages:
            ))
 #+END_SRC
 
-
 ** Excuse me, sir. Do you know where I am?
 
   Async relative line numbering
@@ -302,7 +265,6 @@ Also, to ensure we always compile and use updated packages:
 	(nlinum-relative-setup-evil))
 #+END_SRC
 
-
 ** Highlighting the uncommitted changes
 
   Use =diff-hl= to highlight uncommitted changes when programming.
@@ -312,6 +274,28 @@ Also, to ensure we always compile and use updated packages:
 	:config
 	(add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
 	(add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+#+END_SRC
+
+** Centaur-tabs, finally
+
+#+BEGIN_SRC emacs-lisp
+(use-package centaur-tabs
+  :demand
+  :init (setq centaur-tabs-set-bar 'over)
+  :config
+  (centaur-tabs-mode +1)
+  (centaur-tabs-headline-match)
+  (setq centaur-tabs-set-modified-marker t
+        centaur-tabs-modified-marker " ● "
+        centaur-tabs-cycle-scope 'tabs
+        centaur-tabs-height 30
+        centaur-tabs-set-icons t
+        centaur-tabs-close-button " x ")
+  (centaur-tabs-group-by-projectile-project)
+  :bind
+  ("<C-S-tab>" . centaur-tabs-backward)
+  ("C-<tab>" . centaur-tabs-forward)
+  ("C-w" . kill-buffer))
 #+END_SRC
 
 
@@ -371,7 +355,6 @@ Also, to ensure we always compile and use updated packages:
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-transformers '(company-sort-by-occurrence))
     :bind
-    ("C-<tab>" . company-complete-common-or-cycle)
 	("C-'" . company-complete))
 
   (global-company-mode)
@@ -391,24 +374,42 @@ Also, to ensure we always compile and use updated packages:
 ** =lsp-mode=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-	:hook (
-	  (go-mode . lsp)
-	  (python-mode . lsp))
-	:commands lsp)
-
-	  (defvar lsp-language-id-configuration
-	   '((go-mode . "go")
-		 (anaconda-mode . "python")))
-
-  (use-package lsp-ui
-	:commands lsp-ui-mode)
-
+(use-package lsp-mode
+  :commands (lsp)
+  :bind (:map lsp-mode-map
+		 (("C-c C-f" . lsp-format-buffer)))
+  :hook ((elixir-mode . lsp)
+		 (go-mode . lsp)
+		 (python-mode . lsp))
+  :custom
+  (lsp-prefer-flymake nil)
+  :config
   (use-package company-lsp
-	:commands company-lsp)
+	:config
+	(push 'company-lsp company-backends)))
 
-  (use-package helm-lsp
-	:commands helm-lsp-workspace-symbol)
+(use-package lsp-ui
+  :after lsp-mode
+  :commands lsp-ui-mode
+  :diminish
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-c u" . lsp-ui-imenu))
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-position 'top)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions t)
+  :config
+  (setq lsp-ui-doc-use-webkit t)
+  )
 #+END_SRC
 
 ** =dumb-jump=
@@ -546,16 +547,18 @@ Also, to ensure we always compile and use updated packages:
 ** =smartparens=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :init
-    :bind ("C-SPC" . sp-forward-sexp)
-    :config
-    (sp-pair "{" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-    (sp-pair "[" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-    (sp-pair "(" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
-    (require 'smartparens-config)
-    (smartparens-global-mode 1))
+(use-package smartparens
+  :bind ("C-SPC" . sp-forward-sexp)
+  :init
+  (smartparens-global-mode 1)
+  (smartparens-strict-mode 1)
+  (show-smartparens-global-mode t)
+  (setq smartparens-global-mode t)
+  (require 'smartparens-config)
+  :config
+  (sp-pair "{" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
+  (sp-pair "[" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET")))
+  (sp-pair "(" nil :post-handlers '((jpdl/create-newline-and-enter-sexp "RET"))))
 #+END_SRC
 
 ** =rainbow-delimiters=
@@ -647,22 +650,23 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
 (use-package alchemist
   :after (elixir-mode which-key)
+  :mode ("\\.exs\\'
+          \\.ex\\'")
   :config
   (which-key-add-major-mode-key-based-replacements 'elixir-mode
-    "C-c a"     "alchemist"
-    "C-c a m"   "mix"
-    "C-c a m t" "mix-test"
-    "C-c a X"   "hex"
-    "C-c a c"   "compile"
-    "C-c a e"   "execute"
-    "C-c a p"   "project"
-    "C-c a n"   "phoenix"
-    "C-c a h"   "help"
-    "C-c a i"   "iex"
-    "C-c a v"   "eval"
-    "C-c a o"   "macroexpand"
-    "C-c a f"   "info")
-   (add-hook 'before-save-hook 'elixir-format)
+	"C-c a"     "alchemist"
+	"C-c a m"   "mix"
+	"C-c a m t" "mix-test"
+	"C-c a X"   "hex"
+	"C-c a c"   "compile"
+	"C-c a e"   "execute"
+	"C-c a p"   "project"
+	"C-c a n"   "phoenix"
+	"C-c a h"   "help"
+	"C-c a i"   "iex"
+	"C-c a v"   "eval"
+	"C-c a o"   "macroexpand"
+	"C-c a f"   "info")
 )
 #+END_SRC
 
@@ -922,8 +926,7 @@ Also, to ensure we always compile and use updated packages:
 *** Elipsis in org
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis "...")
-  ;; (setq org-ellipsis " ⤵")
+  (setq org-ellipsis " ...")
 #+END_SRC
 
 
@@ -932,7 +935,6 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
    (setq org-src-tab-acts-natively t)
 #+END_SRC
-
 
 *** Org-Reveal
 
@@ -951,6 +953,74 @@ Also, to ensure we always compile and use updated packages:
    (add-hook 'org-shiftright-final-hook 'windmove-right)
    (setq org-support-shift-select 'always)
  #+END_SRC
+
+** Org Agenda
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-agenda
+  :ensure nil
+  :after org
+  :bind (("C-c c" . org-capture)
+		 ("C-c a" . org-agenda)
+		 ("C-c l" . org-agenda-list))
+  :init
+  (setq org-agenda-files (quote ("~/MEGAsync/agenda/pessoal.org"
+								 "~/MEGAsync/agenda/gris.org"
+								 "~/MEGAsync/agenda/eci.org"
+								 "~/MEGAsync/agenda/capgov.org"
+								 "~/MEGAsync/agenda/wishlist.org"
+								 )))
+  (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+  (setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "TRIP(t)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")
+			  (sequence "WISHLIST" "|" "BOUGHT"))))
+  (setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+			  ("TRIP" :foreground "blue" :weight bold)
+			  ("WISHLIST" :foreground "red" :weight bold)
+			  ("BOUGHT" "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+
+  (setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD") ("WISHLIST") ("TRIP"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD") ("WISHLIST"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD") ("BOUGHT")))))
+
+  (setq org-capture-templates
+      (quote (("t" "todo" entry (file "~/MEGAsync/agenda/refile.org")
+               "* TODO %?\n%U\n")
+              ("a" "respond" entry (file "~/MEGAsync/agenda/refile.org")
+               "* NEXT Responder %:from sobre %:subject\nSCHEDULED: %t\n%U\n%a\n" :immediate-finish t)
+              ("n" "note" entry (file "~/MEGAsync/agenda/refile.org")
+               "* %? :NOTE:\n%U\n%a\n")
+              ("v" "trip" entry (file "~/MEGAsync/agenda/refile.org")
+               "* TRIP %? \n  SCHEDULED: \n%U\n")
+              ("j" "Journal" entry (file+datetree "~/MEGAsync/agenda/journal.org")
+               "* %?\n%U\n")
+              ("w" "wishlist" entry (file "~/MEGAsync/agenda/wishlist.org")
+               "* WISHLIST %?\n%U\n")
+              ("r" "org-protocol" entry (file "~/MEGAsync/agenda/refile.org")
+               "* TODO Revisar %c\n%U\n" :immediate-finish t)
+              ("m" "Reunião" entry (file "~/MEGAsync/agenda/refile.org")
+               "* MEETING %? :MEETING:\n%U")
+              ("p" "Ligação" entry (file "~/MEGAsync/agenda/refile.org")
+               "* PHONE %? :PHONE:\n%U")
+              ("h" "Habit" entry (file "~/MEGAsync/agenda/refile.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+  )
+#+END_SRC
 
 
 ** Trying emacs-jupyter output
@@ -1006,14 +1076,64 @@ Setting default parameters for python
 *** =ivy=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :ensure t
-    :init
-    (setq ivy-mode t)
-    (setq ivy-count-format "(%d/%d) ") ; display (current/total) instead of just total
-    (setq ivy-format-function 'ivy-format-function-line) ; highlight the entire line
-    (setq ivy-use-selectable-prompt t))
+(use-package ivy
+  :init
+  (setq ivy-mode t)
+  (setq ivy-count-format "(%d/%d) ") ; display (current/total) instead of just total
+  (setq ivy-format-function 'ivy-format-function-line) ; highlight the entire line
+  (setq ivy-use-selectable-prompt t))
+
+(use-package ivy-posframe
+  :after ivy
+  :diminish
+  :config
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center))
+        ivy-posframe-height-alist '((t . 20)))
+  ivy-posframe-parameters '((internal-border-width . 10))
+  (setq ivy-posframe-width 70)
+  (ivy-posframe-mode +1))
+
+
+(use-package ivy-rich
+  :preface
+  (defun ivy-rich-switch-buffer-icon (candidate)
+    (with-current-buffer
+        (get-buffer candidate)
+      (all-the-icons-icon-for-mode major-mode)))
+  :init
+  (setq ivy-rich-display-transformers-list ; max column width sum = (ivy-poframe-width - 1)
+        '(ivy-switch-buffer
+          (:columns
+           ((ivy-rich-switch-buffer-icon (:width 2))
+            (ivy-rich-candidate (:width 35))
+            (ivy-rich-switch-buffer-project (:width 15 :face success))
+            (ivy-rich-switch-buffer-major-mode (:width 13 :face warning)))
+           :predicate
+           #'(lambda (cand) (get-buffer cand)))
+          counsel-M-x
+          (:columns
+           ((counsel-M-x-transformer (:width 35))
+            (ivy-rich-counsel-function-docstring (:width 34 :face font-lock-doc-face))))
+          counsel-describe-function
+          (:columns
+           ((counsel-describe-function-transformer (:width 35))
+            (ivy-rich-counsel-function-docstring (:width 34 :face font-lock-doc-face))))
+          counsel-describe-variable
+          (:columns
+           ((counsel-describe-variable-transformer (:width 35))
+            (ivy-rich-counsel-variable-docstring (:width 34 :face font-lock-doc-face))))
+          package-install
+          (:columns
+           ((ivy-rich-candidate (:width 25))
+            (ivy-rich-package-version (:width 12 :face font-lock-comment-face))
+            (ivy-rich-package-archive-summary (:width 7 :face font-lock-builtin-face))
+            (ivy-rich-package-install-summary (:width 23 :face font-lock-doc-face))))))
+  :config
+  (ivy-rich-mode +1)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 #+END_SRC
+
+
 
 *** =counsel=
 
