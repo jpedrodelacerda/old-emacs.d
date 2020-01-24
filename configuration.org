@@ -727,6 +727,13 @@ Also, to ensure we always compile and use updated packages:
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
 #+END_SRC
 
+** Lua
+
+#+BEGIN_SRC emacs-lisp
+(use-package lua-mode
+  :mode "\\.lua\\'")
+#+END_SRC
+
 ** Python
 
   =python-mode= duh
