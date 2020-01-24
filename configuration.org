@@ -969,7 +969,7 @@ Also, to ensure we always compile and use updated packages:
   :ensure nil
   :after org
   :bind (("C-c c" . org-capture)
-		 ("C-c a" . org-agenda)
+		 ("C-c o" . org-agenda)
 		 ("C-c l" . org-agenda-list))
   :init
   (setq org-agenda-files (quote ("~/MEGAsync/agenda/pessoal.org"
