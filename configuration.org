@@ -638,6 +638,14 @@ Also, to ensure we always compile and use updated packages:
     :mode "Dockerfile$")
 #+END_SRC
 
+** Elm
+
+#+BEGIN_SRC emacs-lisp
+(use-package elm-mode
+  :ensure t
+  :mode ("\\.elm\\'"))
+#+END_SRC
+
 ** Elixir
 
 #+BEGIN_SRC emacs-lisp
