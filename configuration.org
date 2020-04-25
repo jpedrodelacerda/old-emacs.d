@@ -9,6 +9,7 @@
   (setq home (concat "/home/" (eval user-login-name)))
 #+END_SRC
 
+
 * Configure =use-package=
 
   This setup uses =use-package= to make sure that all packages are installed before loading them.
@@ -90,7 +91,7 @@ Also, to ensure we always compile and use updated packages:
 
 
 * UI Preferences
-  
+
 ** Tweaking Window
 ***   Disabling menu bar and scroll bar because they just take space up.
 
@@ -126,6 +127,28 @@ Also, to ensure we always compile and use updated packages:
   (setq inhibit-startup-message t)
 #+END_SRC
 
+** Dashboard
+
+#+BEGIN_SRC emacs-lisp
+(use-package dashboard
+  :ensure t
+  :init (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  :hook (dashboard-mode . (lambda () (nlinum-mode)))
+  :config
+  (setq dashboard-startup-banner (concat home "/emacs.d/enso.png"))
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (add-to-list 'dashboard-items '(agenda) t)
+  (setq show-week-agenda-p t)
+  (setq recentf-exclude (org-agenda-files))
+  (setq dashboard-items '(
+                        (recents  . 5)
+                        (projects . 5)
+                        (bookmarks . 5)
+                        (agenda . 5)))
+  (dashboard-setup-startup-hook))
+#+END_SRC
+
 ** Theming
 
 *** First we need =all-the-icons=
@@ -134,13 +157,12 @@ Also, to ensure we always compile and use updated packages:
   (use-package all-the-icons)
 #+END_SRC
 
-*** Back to gruvbox.
+*** doom-themes
 
 #+BEGIN_SRC emacs-lisp
-  (use-package gruvbox-theme 
-    :config
-	(load-theme 'gruvbox-dark-soft)
-    (enable-theme 'gruvbox-dark-soft))
+(use-package doom-themes
+  :config
+  (load-theme 'doom-gruvbox))
 #+END_SRC
 
 *** Doom modeline for now
@@ -164,6 +186,30 @@ Also, to ensure we always compile and use updated packages:
   (setq doom-modeline-icon (display-graphic-p))
   (setq doom-modeline-minor-modes (featurep 'minions)))
 #+END_SRC
+
+** Solaire-mode
+
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package solaire-mode
+  ;; :after doom-themes
+  ;; :hook ((after-change-major-mode . turn-on-solaire-mode)
+         ;; (ediff-prepare-buffer . solaire-mode)
+         ;; ...if you use auto-revert-mode, this prevents solaire-mode from turning
+         ;; itself off every time Emacs reverts the file
+         ;; (after-revert . turn-on-solaire-mode)
+         ;; highlight the minibuffer when it is activated:
+         ;; (minibuffer-setup . solaire-mode-in-minibuffer))
+  ;; ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+  ;; (minibuffer-setup . solaire-mode-in-minibuffer)
+  ;; :config
+  ;; (solaire-mode-swap-bg))
+  ;(add-hook 'after-make-frame-functions
+           ;; (lambda (_frame)
+             ;; (load-theme 'doom-city-lights t)
+             ;; (solaire-mode-swap-bg))))
+#+END_SRC
+
 
 ** And this is supposed to be (+18), so no minors. (Just kidding, if you're under 18 just go play some Magic or whatever)
 
@@ -298,6 +344,23 @@ Also, to ensure we always compile and use updated packages:
   ("C-w" . kill-buffer))
 #+END_SRC
 
+** Perspective
+
+#+BEGIN_SRC emacs-lisp
+(use-package perspective
+  :config (persp-mode))
+#+END_SRC
+
+** highlight-indent-guides
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (setq highlight-indent-guides-character ?\|)
+  :hook (prog-mode . highlight-indent-guides-mode))
+#+END_SRC
+
 
 * Project Management
 
@@ -351,14 +414,12 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
+    :defer t
+    :init (global-company-mode)
     :config
-    (add-hook 'after-init-hook 'global-company-mode)
     (setq company-transformers '(company-sort-by-occurrence))
     :bind
 	("C-'" . company-complete))
-
-  (global-company-mode)
-
 #+END_SRC
 
   Company with fuzzing...
@@ -374,43 +435,51 @@ Also, to ensure we always compile and use updated packages:
 ** =lsp-mode=
 
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-mode
-  :commands (lsp)
-  :bind (:map lsp-mode-map
-		 (("C-c C-f" . lsp-format-buffer)))
-  :hook ((elixir-mode . lsp)
-		 (go-mode . lsp)
-		 (python-mode . lsp))
-  :custom
-  (lsp-prefer-flymake nil)
-  :config
-  (use-package company-lsp
+  (use-package lsp-mode
+	:commands (lsp)
+	:bind (:map lsp-mode-map
+		   (("C-c C-f" . lsp-format-buffer)))
+	:hook ((dart-mode . lsp)
+		   (elm-mode . lsp)
+		   (elixir-mode . lsp)
+		   (go-mode . lsp)
+		   (js2-mode . lsp)
+		   (python-mode . lsp))
+	:custom
+	(lsp-prefer-flymake nil)
 	:config
-	(push 'company-lsp company-backends)))
+    (push 'company-capf company-backends))
 
-(use-package lsp-ui
-  :after lsp-mode
-  :commands lsp-ui-mode
-  :diminish
-  :bind (:map lsp-ui-mode-map
-              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references] . lsp-ui-peek-find-references)
-              ("C-c u" . lsp-ui-imenu)
-              ("C-d" . lsp-ui-doc-show))
-  :custom-face
-  (lsp-ui-doc-background ((t (:background nil))))
-  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-  :custom
-  (lsp-ui-doc-enable nil)
-  (lsp-ui-doc-header t)
-  (lsp-ui-doc-include-signature t)
-  (lsp-ui-doc-position 'top)
-  (lsp-ui-doc-border (face-foreground 'default))
-  (lsp-ui-sideline-ignore-duplicate t)
-  (lsp-ui-sideline-show-code-actions t)
-  :config
-  (setq lsp-ui-doc-use-webkit t)
-  )
+  (use-package lsp-ui
+	:after lsp-mode
+	:commands lsp-ui-mode
+	:diminish
+	:bind (:map lsp-ui-mode-map
+				([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+				([remap xref-find-references] . lsp-ui-peek-find-references)
+				("C-c u" . lsp-ui-imenu)
+				("C-d" . lsp-ui-doc-show))
+	:custom-face
+	(lsp-ui-doc-background ((t (:background nil))))
+	(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+	:custom
+	(lsp-ui-doc-enable nil)
+	(lsp-ui-doc-header t)
+	(lsp-ui-doc-include-signature t)
+	(lsp-ui-doc-position 'top)
+	(lsp-ui-doc-border (face-foreground 'default))
+	(lsp-ui-sideline-ignore-duplicate t)
+	(lsp-ui-sideline-show-code-actions t)
+	:config
+	(setq lsp-ui-doc-use-webkit t)
+	)
+
+  (use-package lsp-treemacs
+	:config
+	(lsp-treemacs-sync-mode 1)
+	:bind
+	(:map lsp-mode-map
+		  ("M-q" . lsp-treemacs-symbols)))
 #+END_SRC
 
 ** =dumb-jump=
@@ -631,6 +700,21 @@ Also, to ensure we always compile and use updated packages:
     :mode "\\.apib\\'")
 #+END_SRC
 
+** Dart
+
+#+BEGIN_SRC emacs-lisp
+(use-package dart-mode
+  :config
+  (setq dart-format-on-save t)
+  :mode ("\\.dart\\'"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-dart
+  :ensure t)
+#+END_SRC
+
+
 ** Dockerfiles
 
 #+BEGIN_SRC emacs-lisp
@@ -643,7 +727,12 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
 (use-package elm-mode
   :ensure t
-  :mode ("\\.elm\\'"))
+  :mode ("\\.elm\\'")
+  :init
+  ;; (setq elm-indent-mode nil)
+  (setq elm-indent-offset 4)
+  (setq elm-format-on-save t)
+)
 #+END_SRC
 
 ** Elixir
@@ -679,7 +768,30 @@ Also, to ensure we always compile and use updated packages:
 )
 #+END_SRC
 
-** Jinja2
+** Flutter
+
+#+BEGIN_SRC emacs-lisp
+(use-package flutter
+  :after dart-mode
+  :bind (:map dart-mode-map
+              ("C-M-w" . #'flutter-run-web-server-or-hot-reload)
+              ("C-M-c" . #'flutter-run-chrome-or-hot-reload))
+  :config
+  (defun flutter-run-chrome-or-hot-reload ()
+    (interactive)
+    (if (flutter--running-p)
+        (flutter-hot-reload)
+        (flutter-run "-d chrome")))
+  (defun flutter-run-web-server-or-hot-reload ()
+    (interactive)
+    (if (flutter--running-p)
+        (flutter-hot-reload)
+        (flutter-run "-d web-server")))
+  :custom
+  (flutter-sdk-path "/opt/flutter"))
+#+END_SRC
+
+* Jinja2
 
 #+BEGIN_SRC emacs-lisp
   (use-package jinja2-mode
@@ -884,26 +996,6 @@ Also, to ensure we always compile and use updated packages:
          "\\.yaml\\'"))
 #+END_SRC
 
-** =web-mode=
-
-#+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-	:mode
-    "\\.gohtml$"
-	"\\.html$"
-	"\\.php$")
-#+END_SRC
-
-  Setting things up:
-  - color-related words with =rainbow-mode=
-  - ident with 2 spaces
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'web-mode-hook
-			(lambda ()
-			  (rainbow-mode)
-			  (setq web-mode-markup-indent-offset 2)))
-#+END_SRC
 
 ** =emmet-mode=
 
@@ -912,6 +1004,7 @@ Also, to ensure we always compile and use updated packages:
 	:mode
 	"\\.gohtml$"
     "\\.html$"
+    "\\.css$"
     "\\.php$")
 #+END_SRC
 
@@ -920,11 +1013,23 @@ Also, to ensure we always compile and use updated packages:
     :mode
 	"\\.gohtml$"
     "\\.html$"
+    "\\.css$"
     "\\.php$"
     :config
     (add-to-list 'company-backends 'company-ansible))
 #+END_SRC
 
+  Setting things up:
+  - color-related words with =rainbow-mode=
+
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-mode
+  :mode
+    "\\.gohtml$"
+	"\\.html$"
+    "\\.css$"
+	"\\.php$")
+#+END_SRC
 
 * Org Mode
   
