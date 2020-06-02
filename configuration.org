@@ -445,10 +445,20 @@ Also, to ensure we always compile and use updated packages:
 		   (go-mode . lsp)
 		   (js2-mode . lsp)
 		   (python-mode . lsp))
+		   ;; (before-save-hook . lsp-format-buffer))
 	:custom
 	(lsp-prefer-flymake nil)
 	:config
-    (push 'company-capf company-backends))
+	(add-hook 'before-save-hook 'lsp-format-buffer)
+	(setq lsp-enable-indentation t)
+	(setq ls-enable-snippet t)
+	(setq lsp-enable-on-type-formatting nil)
+	(setq lsp-enable-xref t)
+	(setq lsp-enable-file-watchers t)
+	(setq lsp-eldoc-render-all nil)
+	(push 'company-capf company-backends)
+    ;; Elixir-ls
+	(setq lsp-clients-elixir-server-executable "/usr/lib/elixir-ls/language_server.sh"))
 
   (use-package lsp-ui
 	:after lsp-mode
