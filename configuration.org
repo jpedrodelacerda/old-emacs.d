@@ -162,6 +162,7 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :config
+  (setq doom-gruvbox-dark-variant "hard")
   (load-theme 'doom-gruvbox))
 #+END_SRC
 
@@ -631,7 +632,7 @@ Also, to ensure we always compile and use updated packages:
   :bind ("C-SPC" . sp-forward-sexp)
   :init
   (smartparens-global-mode 1)
-  (smartparens-strict-mode 1)
+  ;; (smartparens-strict-mode 1)
   (show-smartparens-global-mode t)
   (setq smartparens-global-mode t)
   (require 'smartparens-config)
@@ -1040,6 +1041,7 @@ Also, to ensure we always compile and use updated packages:
     "\\.css$"
 	"\\.php$")
 #+END_SRC
+
 
 * Org Mode
   
