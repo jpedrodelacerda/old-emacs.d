@@ -445,6 +445,7 @@ Also, to ensure we always compile and use updated packages:
 		   (elixir-mode . lsp)
 		   (go-mode . lsp)
 		   (js2-mode . lsp)
+           (rust-mode . lsp)
 		   (python-mode . lsp))
 		   ;; (before-save-hook . lsp-format-buffer))
 	:custom
@@ -458,7 +459,7 @@ Also, to ensure we always compile and use updated packages:
 	(setq lsp-enable-file-watchers t)
 	(setq lsp-eldoc-render-all nil)
 	(push 'company-capf company-backends)
-    ;; Elixir-ls
+	;; Elixir-ls
 	(setq lsp-clients-elixir-server-executable "/usr/lib/elixir-ls/language_server.sh"))
 
   (use-package lsp-ui
@@ -856,6 +857,13 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (setenv "GOPATH" (concat home "/go"))
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
+#+END_SRC
+
+** Rust
+
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :mode "\\.rs$")
 #+END_SRC
 
 ** Lua
