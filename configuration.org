@@ -444,6 +444,8 @@ Also, to ensure we always compile and use updated packages:
 		   (elm-mode . lsp)
 		   (elixir-mode . lsp)
 		   (go-mode . lsp)
+           (c-mode . lsp)
+           (c++-mode . lsp)
 		   (js2-mode . lsp)
            (rust-mode . lsp)
 		   (python-mode . lsp))
@@ -859,11 +861,12 @@ Also, to ensure we always compile and use updated packages:
   (jpdl/append-to-path (concat (getenv "GOPATH") "/bin"))
 #+END_SRC
 
-** Rust
+** C/C++
 
 #+BEGIN_SRC emacs-lisp
-(use-package rust-mode
-  :mode "\\.rs$")
+  (use-package irony
+	:hook ((c-mode . irony-mode)
+	       (c++-mode . irony-mode)))
 #+END_SRC
 
 ** Lua
