@@ -162,8 +162,9 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :config
-  (setq doom-gruvbox-dark-variant "hard")
-  (load-theme 'doom-gruvbox))
+  ;; (setq doom-gruvbox-dark-variant "hard")
+  ;; (load-theme 'doom-gruvbox))
+  (load-theme 'doom-solarized-light))
 #+END_SRC
 
 *** Doom modeline for now
@@ -838,9 +839,21 @@ Enable ligatures
 ** JavaScript
 
 #+BEGIN_SRC emacs-lisp
-  (use-package js2-mode
-    :mode "\\.js\\'")
+(use-package js-mode
+  :ensure js
+  :commands (js-mode)
+  :mode ("\\.js\\'"
+         "\\.jsx\\'")
+)
 #+END_SRC
+
+# #+BEGIN_SRC emacs-lisp
+#   (use-package js2-mode
+#     :commands (js2-minor-mode)
+#     :mode (("\\.js\\'" . js2-minor-mode)
+#            ("\\.jsx\\'" . js2-minor-mode))
+#     :defer t)
+# #+END_SRC
 
 ** =markdown=
 
@@ -1033,21 +1046,29 @@ Enable ligatures
 
 #+END_SRC
 
+** JSON
+
+#+BEGIN_SRC emacs-lisp
+(use-package json-mode
+  :ensure t
+  :defer t
+  :mode ("\\.json\\'"))
+#+END_SRC
+
 ** =yaml-mode=
 
 #+BEGIN_SRC emacs-lisp
 (use-package yaml-mode
-  :mode ("\\.yml\\'"
-         "\\.yaml\\'"))
+  :mode "\\.yml\\'")
 #+END_SRC
 
 
-** =emmet-mode=
+** =web-mode=
 
 #+BEGIN_SRC emacs-lisp
-  (use-package emmet-mode
-	:mode
-	"\\.gohtml$"
+  (use-package web-mode
+    :mode
+    "\\.gohtml$"
     "\\.html$"
     "\\.css$"
     "\\.php$")
