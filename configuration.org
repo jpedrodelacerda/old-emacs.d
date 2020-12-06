@@ -40,11 +40,11 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil
-	:config
-	(evil-mode 1)
+    :config
+    (evil-mode 1)
     (setq evil-emacs-state-mode nil)
-	:bind
-	("C-s" . evil-write))
+    :bind
+    ("C-s" . evil-write))
 #+END_SRC
 
   Enable =surround= everywhere.
@@ -217,7 +217,7 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (use-package minions
     :config
-	(minions-mode 1))
+    (minions-mode 1))
 #+END_SRC
 
 ** Font and resizing
@@ -268,23 +268,45 @@ Also, to ensure we always compile and use updated packages:
   (define-key global-map (kbd "C-_") 'decrease-font-size)
   (define-key global-map (kbd "C--") 'decrease-font-size)
   
+  ;; (load "~/emacs.d/fira-code-ligatures.el")
   (reset-font-size)
+#+END_SRC
+
+Enable ligatures
+#+BEGIN_SRC emacs-lisp
+;; Enable the www ligature in every possible major mode
+(use-package ligature
+  :load-path "~/emacs.d/ligature.el"
+  :config
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable ligatures in programming modes                                                           
+  (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                                     ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                                     "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                                     "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                                     "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                                     "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                                     "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                                     "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                                     "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                                     "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+  (global-ligature-mode 't))
 #+END_SRC
 
 ** Handling buffers/windows and shit
 
 #+BEGIN_SRC emacs-lisp
   (defun split-window-vertically-and-switch ()
-	"After splitting the window, also switch to it."
-	(interactive)
-	(split-window-vertically)
-	(other-window 1))
+    "After splitting the window, also switch to it."
+    (interactive)
+    (split-window-vertically)
+    (other-window 1))
 
   (defun split-window-horizontally-and-switch ()
-	"After splitting the window, also switch to it."
-	(interactive)
-	(split-window-horizontally)
-	(other-window 1))
+    "After splitting the window, also switch to it."
+    (interactive)
+    (split-window-horizontally)
+    (other-window 1))
 
 #+END_SRC
 
@@ -292,12 +314,12 @@ Also, to ensure we always compile and use updated packages:
   To move between buffers with Meta and arrows
 #+BEGIN_SRC emacs-lisp
   (use-package windmove
-	:bind (("M-<up>"    . windmove-up   )
-		   ("M-<down>"  . windmove-down )
-		   ("M-<right>" . windmove-right)
-		   ("M-<left>"  . windmove-left )
-		   ("C-M-r"     . split-window-horizontally-and-switch)
-		   ("C-M-d"     . split-window-vertically-and-switch)
+    :bind (("M-<up>"    . windmove-up   )
+           ("M-<down>"  . windmove-down )
+           ("M-<right>" . windmove-right)
+           ("M-<left>"  . windmove-left )
+           ("C-M-r"     . split-window-horizontally-and-switch)
+           ("C-M-d"     . split-window-vertically-and-switch)
            ))
 #+END_SRC
 
@@ -307,9 +329,9 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package nlinum-relative
-	:config
-	(global-nlinum-relative-mode)
-	(nlinum-relative-setup-evil))
+    :config
+    (global-nlinum-relative-mode)
+    (nlinum-relative-setup-evil))
 #+END_SRC
 
 ** Highlighting the uncommitted changes
@@ -318,9 +340,9 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-	:config
-	(add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-	(add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+    :config
+    (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+    (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
 
 ** Centaur-tabs, finally
@@ -381,25 +403,25 @@ Also, to ensure we always compile and use updated packages:
   Well, helm is awesome, right. So why the +hell+ heck not?!
   Here I set:
     - =helm-map= keys:
-		  - =TAB= to execute some action,
-		  - =C-z= to select
-	- General shortcuts:
-		  - =C-x C-b= to open helm-mini
-		  - =C-x C-f= to find file with helm
-		  - =C-x C-d= to find file with helm on projectile
+          - =TAB= to execute some action,
+          - =C-z= to select
+    - General shortcuts:
+          - =C-x C-b= to open helm-mini
+          - =C-x C-f= to find file with helm
+          - =C-x C-d= to find file with helm on projectile
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm
-	:config
-	(helm-autoresize-mode 1)
-	(setq helm-autoresize-min-height 25)
-	(setq helm-autoresize-max-height 35)
-	(define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
-	(define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
-	(define-key helm-map (kbd "C-z") #'helm-select-action)
-	:bind (("C-x C-b" . helm-mini)
-	       ("C-x C-f" . helm-find-files)
-	       ("C-x C-d" . helm-projectile-find-file)))
+    :config
+    (helm-autoresize-mode 1)
+    (setq helm-autoresize-min-height 25)
+    (setq helm-autoresize-max-height 35)
+    (define-key helm-map (kbd "TAB") #'helm-execute-persistent-action)
+    (define-key helm-map (kbd "<tab>") #'helm-execute-persistent-action)
+    (define-key helm-map (kbd "C-z") #'helm-select-action)
+    :bind (("C-x C-b" . helm-mini)
+           ("C-x C-f" . helm-find-files)
+           ("C-x C-d" . helm-projectile-find-file)))
 #+END_SRC
    
 
@@ -407,20 +429,19 @@ Also, to ensure we always compile and use updated packages:
 
   I mean... we want this all the time, right?!
   Here I set:
-	- Company to sort suggestions by occurrence
+    - Company to sort suggestions by occurrence
     - General shortcuts:
-		  - =C-TAB= to select next suggestion
-		  - =C-'= to accept suggestion
+          - =C-TAB= to select next suggestion
+          - =C-'= to accept suggestion
 
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
-    :defer t
-    :init (global-company-mode)
     :config
+    (global-company-mode)
     (setq company-transformers '(company-sort-by-occurrence))
     :bind
-	("C-'" . company-complete))
+    ("C-'" . company-complete))
 #+END_SRC
 
   Company with fuzzing...
@@ -429,71 +450,73 @@ Also, to ensure we always compile and use updated packages:
   (use-package company-flx
     :after
     (company)
-	:config
-	(company-flx-mode +1))
+    :config
+    (company-flx-mode +1))
 #+END_SRC
 
 ** =lsp-mode=
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-	:commands (lsp)
-	:bind (:map lsp-mode-map
-		   (("C-c C-f" . lsp-format-buffer)))
-	:hook ((dart-mode . lsp)
-		   (elm-mode . lsp)
-		   (elixir-mode . lsp)
-		   (go-mode . lsp)
+    :commands (lsp)
+        :after (company-mode)
+    :bind (:map lsp-mode-map
+           (("C-c C-f" . lsp-format-buffer)))
+    :hook ((dart-mode . lsp)
+           (elm-mode . lsp)
+           (elixir-mode . lsp)
+           (go-mode . lsp)
            (c-mode . lsp)
            (c++-mode . lsp)
-		   (js2-mode . lsp)
+           (web-mode . lsp)
+           (js-mode . lsp)
            (rust-mode . lsp)
-		   (python-mode . lsp))
-		   ;; (before-save-hook . lsp-format-buffer))
-	:custom
-	(lsp-prefer-flymake nil)
-	:config
-	(add-hook 'before-save-hook 'lsp-format-buffer)
-	(setq lsp-enable-indentation t)
-	(setq ls-enable-snippet t)
-	(setq lsp-enable-on-type-formatting nil)
-	(setq lsp-enable-xref t)
-	(setq lsp-enable-file-watchers t)
-	(setq lsp-eldoc-render-all nil)
-	(push 'company-capf company-backends)
-	;; Elixir-ls
-	(setq lsp-clients-elixir-server-executable "/usr/lib/elixir-ls/language_server.sh"))
+           (python-mode . lsp)
+           (before-save-hook . lsp-format-buffer)
+           (prog-mode-hook . 'lsp))
+    :config
+    (add-hook 'before-save-hook 'lsp-format-buffer)
+    (setq lsp-diagnostics-provider :auto)
+    (setq lsp-enable-indentation t)
+    (setq ls-enable-snippet t)
+    (setq lsp-enable-on-type-formatting nil)
+    (setq lsp-enable-xref t)
+    (add-hook 'js-mode 'lsp)
+    (setq lsp-enable-file-watchers t)
+    (setq lsp-eldoc-render-all nil)
+    ;; Elixir-ls
+    (setq lsp-clients-elixir-server-executable "/usr/lib/elixir-ls/language_server.sh"))
 
   (use-package lsp-ui
-	:after lsp-mode
-	:commands lsp-ui-mode
-	:diminish
-	:bind (:map lsp-ui-mode-map
-				([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-				([remap xref-find-references] . lsp-ui-peek-find-references)
-				("C-c u" . lsp-ui-imenu)
-				("C-d" . lsp-ui-doc-show))
-	:custom-face
-	(lsp-ui-doc-background ((t (:background nil))))
-	(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-	:custom
-	(lsp-ui-doc-enable nil)
-	(lsp-ui-doc-header t)
-	(lsp-ui-doc-include-signature t)
-	(lsp-ui-doc-position 'top)
-	(lsp-ui-doc-border (face-foreground 'default))
-	(lsp-ui-sideline-ignore-duplicate t)
-	(lsp-ui-sideline-show-code-actions t)
-	:config
-	(setq lsp-ui-doc-use-webkit t)
-	)
+    :after lsp-mode
+    :commands lsp-ui-mode
+    :diminish
+    :bind (:map lsp-ui-mode-map
+                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+                ([remap xref-find-references] . lsp-ui-peek-find-references)
+                ("C-c u" . lsp-ui-imenu)
+                ("C-d" . lsp-ui-doc-show))
+    :custom-face
+    (lsp-ui-doc-background ((t (:background nil))))
+    (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+    :custom
+    (lsp-ui-doc-enable nil)
+    (lsp-ui-doc-header t)
+    (lsp-ui-doc-include-signature t)
+    (lsp-ui-doc-position 'top)
+    (lsp-ui-doc-border (face-foreground 'default))
+    (lsp-ui-sideline-ignore-duplicate t)
+    (lsp-ui-sideline-show-code-actions t)
+    :config
+    (setq lsp-ui-doc-use-webkit t)
+    )
 
   (use-package lsp-treemacs
-	:config
-	(lsp-treemacs-sync-mode 1)
-	:bind
-	(:map lsp-mode-map
-		  ("M-q" . lsp-treemacs-symbols)))
+    :config
+    (lsp-treemacs-sync-mode 1)
+    :bind
+    (:map lsp-mode-map
+          ("M-q" . lsp-treemacs-symbols)))
 #+END_SRC
 
 ** =dumb-jump=
@@ -501,24 +524,24 @@ Also, to ensure we always compile and use updated packages:
   It seems nice and handy. Because it is.
   Here I set:
     - General shortcuts:
-	  - =M-.= to jump to definition
-	  - =M-g j= to jump to definition
-	  - =M-g o= jump on other window
-	  - =M-g x= jump to external
-	  - =M-g z= jump to external on other window
+      - =M-.= to jump to definition
+      - =M-g j= to jump to definition
+      - =M-g o= jump on other window
+      - =M-g x= jump to external
+      - =M-g z= jump to external on other window
 
 #+BEGIN_SRC emacs-lisp
   (use-package dumb-jump
-	:bind (
+    :bind (
     ("M-." . dumb-jump-go)
     ("M-g o" . dumb-jump-go-other-window)
-	("M-g j" . dumb-jump-go)
-	("M-g i" . dumb-jump-go-prompt)
-	("M-g x" . dumb-jump-go-prefer-external)
-	("M-g z" . dumb-jump-go-prefer-external-other-window))
+    ("M-g j" . dumb-jump-go)
+    ("M-g i" . dumb-jump-go-prompt)
+    ("M-g x" . dumb-jump-go-prefer-external)
+    ("M-g z" . dumb-jump-go-prefer-external-other-window))
     :config
     (define-key evil-normal-state-map (kbd "M-.") 'dumb-jump-go)
-	(setq dumb-jump-selector 'ivy))
+    (setq dumb-jump-selector 'ivy))
 #+END_SRC
 
 ** =flycheck=
@@ -534,9 +557,9 @@ Also, to ensure we always compile and use updated packages:
   Magit rocks, there's no denying. Using =evil= keybindings with =evil-mode=
   Here I set:
     - General shortcuts:
-		  - =C-x g= to see status menu
-	- following [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes beyond 50 characters
-	- starting commit message buffer with insert state
+          - =C-x g= to see status menu
+    - following [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes beyond 50 characters
+    - starting commit message buffer with insert state
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
@@ -569,12 +592,12 @@ Also, to ensure we always compile and use updated packages:
   Well, projectile is the way to go when we talk about projects on emacs.
   Here I set:
     - General shortcuts:
-		  - =C-c p= to projectile menu
-				- 4: other-window
-				- 5: other-frame
-				- s: search
-				- x: execute
-	- Completion: helm
+          - =C-c p= to projectile menu
+                - 4: other-window
+                - 5: other-frame
+                - s: search
+                - x: execute
+    - Completion: helm
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
@@ -656,7 +679,7 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil-nerd-commenter
-	:bind ("M-;" . evilnc-comment-or-uncomment-lines))
+    :bind ("M-;" . evilnc-comment-or-uncomment-lines))
 #+END_SRC
 
 
@@ -689,23 +712,23 @@ Also, to ensure we always compile and use updated packages:
     :mode "\\.ts\\'")
 #+END_SRC
 
-** Ansible
+# ** Ansible
+# 
+# #+BEGIN_SRC emacs-lisp
+#   (use-package ansible
+#    :after (yaml-mode)
+#    :mode ("\\.yml\\'"
+#           "\\.yaml\\'"))
+# #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (use-package ansible
-   :after (yaml-mode)
-   :mode ("\\.yml\\'"
-	      "\\.yaml\\'"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-ansible
-   :after
-   (company)
-   :mode ("\\.yml\\'"
-          "\\.yaml\\'")
-   :config (add-to-list 'company-backends 'company-ansible))
-#+END_SRC
+# #+BEGIN_SRC emacs-lisp
+#   (use-package company-ansible
+#    :after
+#    (company)
+#    :mode ("\\.yml\\'"
+#           "\\.yaml\\'")
+#    :config (add-to-list 'company-backends 'company-ansible))
+# #+END_SRC
 
 ** API Blueprint
 
@@ -766,19 +789,19 @@ Also, to ensure we always compile and use updated packages:
           \\.ex\\'")
   :config
   (which-key-add-major-mode-key-based-replacements 'elixir-mode
-	"C-c a"     "alchemist"
-	"C-c a m"   "mix"
-	"C-c a m t" "mix-test"
-	"C-c a X"   "hex"
-	"C-c a c"   "compile"
-	"C-c a e"   "execute"
-	"C-c a p"   "project"
-	"C-c a n"   "phoenix"
-	"C-c a h"   "help"
-	"C-c a i"   "iex"
-	"C-c a v"   "eval"
-	"C-c a o"   "macroexpand"
-	"C-c a f"   "info")
+    "C-c a"     "alchemist"
+    "C-c a m"   "mix"
+    "C-c a m t" "mix-test"
+    "C-c a X"   "hex"
+    "C-c a c"   "compile"
+    "C-c a e"   "execute"
+    "C-c a p"   "project"
+    "C-c a n"   "phoenix"
+    "C-c a h"   "help"
+    "C-c a i"   "iex"
+    "C-c a v"   "eval"
+    "C-c a o"   "macroexpand"
+    "C-c a f"   "info")
 )
 #+END_SRC
 
@@ -837,19 +860,19 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
-	:mode "\\.go\\'")
+    :mode "\\.go\\'")
 
   (use-package go-errcheck)
 
   (use-package go-eldoc
-	:config
-	(add-hook 'go-mode-hook 'go-eldoc-setup))
+    :config
+    (add-hook 'go-mode-hook 'go-eldoc-setup))
 
   (use-package company-go
    :config
    (add-hook 'go-mode-hook (lambda ()
-						 (set (make-local-variable 'company-backends) '(company-go))
-						 (company-mode)))
+                         (set (make-local-variable 'company-backends) '(company-go))
+                         (company-mode)))
    (add-hook 'before-save-hook 'gofmt-before-save)
    '(company-go-insert-arguments t))
 #+END_SRC
@@ -865,8 +888,8 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package irony
-	:hook ((c-mode . irony-mode)
-	       (c++-mode . irony-mode)))
+    :hook ((c-mode . irony-mode)
+           (c++-mode . irony-mode)))
 #+END_SRC
 
 ** Lua
@@ -1001,7 +1024,7 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package company-terraform
-	:after (company terraform-mode)
+    :after (company terraform-mode)
     :config (company-terraform-init))
 #+END_SRC
 
@@ -1033,7 +1056,7 @@ Also, to ensure we always compile and use updated packages:
 #+BEGIN_SRC emacs-lisp
   (use-package company-web
     :mode
-	"\\.gohtml$"
+    "\\.gohtml$"
     "\\.html$"
     "\\.css$"
     "\\.php$"
@@ -1048,9 +1071,9 @@ Also, to ensure we always compile and use updated packages:
 (use-package rainbow-mode
   :mode
     "\\.gohtml$"
-	"\\.html$"
+    "\\.html$"
     "\\.css$"
-	"\\.php$")
+    "\\.php$")
 #+END_SRC
 
 
@@ -1062,8 +1085,8 @@ Also, to ensure we always compile and use updated packages:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-	:config
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
 
@@ -1105,21 +1128,21 @@ Also, to ensure we always compile and use updated packages:
   :ensure nil
   :after org
   :bind (("C-c c" . org-capture)
-		 ("C-c o" . org-agenda)
-		 ("C-c l" . org-agenda-list))
+         ("C-c o" . org-agenda)
+         ("C-c l" . org-agenda-list))
   :init
   (setq org-agenda-files (quote ("~/MEGAsync/agenda/pessoal.org"
-								 "~/MEGAsync/agenda/gris.org"
-								 "~/MEGAsync/agenda/eci.org"
-								 "~/MEGAsync/agenda/capgov.org"
-								 "~/MEGAsync/agenda/wishlist.org"
-								 )))
+                                 "~/MEGAsync/agenda/gris.org"
+                                 "~/MEGAsync/agenda/eci.org"
+                                 "~/MEGAsync/agenda/capgov.org"
+                                 "~/MEGAsync/agenda/wishlist.org"
+                                 )))
   (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
   (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "TRIP(t)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")
-			  (sequence "WISHLIST" "|" "BOUGHT"))))
+              (sequence "WISHLIST" "|" "BOUGHT"))))
   (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
@@ -1128,9 +1151,9 @@ Also, to ensure we always compile and use updated packages:
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("MEETING" :foreground "forest green" :weight bold)
-			  ("TRIP" :foreground "blue" :weight bold)
-			  ("WISHLIST" :foreground "red" :weight bold)
-			  ("BOUGHT" "forest green" :weight bold)
+              ("TRIP" :foreground "blue" :weight bold)
+              ("WISHLIST" :foreground "red" :weight bold)
+              ("BOUGHT" "forest green" :weight bold)
               ("PHONE" :foreground "forest green" :weight bold))))
 
   (setq org-todo-state-tags-triggers
@@ -1284,14 +1307,14 @@ Setting default parameters for python
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
     :init  
-	(setq counsel-mode t))
+    (setq counsel-mode t))
 #+END_SRC
 
 *** Some =smex=
 
 #+BEGIN_SRC emacs-lisp
   (use-package smex
-	:init (smex-initialize))
+    :init (smex-initialize))
 
 #+END_SRC
 
